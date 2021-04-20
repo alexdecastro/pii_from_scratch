@@ -1,5 +1,58 @@
 from django.db import models
+from django.db.models import Q
+from model_utils import Choices
 from django.urls import reverse
+
+
+ORDER_COLUMN_CHOICE_ADDRESS = Choices(
+    ('0', 'addressid'),
+    ('1', 'aptnumber'),
+    ('2', 'city'),
+    ('3', 'nearest'),
+    ('4', 'state'),
+    ('5', 'streetname'),
+    ('6', 'streetnumber'),
+    ('7', 'zipcode'),
+    ('8', 'google_place_id')
+)
+
+
+def query_address_by_args(**kwargs):
+    draw = int(kwargs.get('draw', None)[0])
+    length = int(kwargs.get('length', None)[0])
+    start = int(kwargs.get('start', None)[0])
+    search_value = kwargs.get('search[value]', None)[0]
+    order_column = kwargs.get('order[0][column]', None)[0]
+    order = kwargs.get('order[0][dir]', None)[0]
+
+    order_column = ORDER_COLUMN_CHOICE_ADDRESS[order_column]
+    # django orm '-' -> desc
+    if order == 'desc':
+        order_column = '-' + order_column
+
+    queryset = Addresses.objects.all()
+    total = queryset.count()
+
+    if search_value:
+        queryset = queryset.filter(Q(addressid__icontains=search_value) |
+                                        Q(streetname__icontains=search_value) |
+                                        Q(streetnumber__icontains=search_value) |
+                                        Q(zipcode__icontains=search_value) |
+                                        Q(state__icontains=search_value))
+
+    count = queryset.count()
+
+    if length == -1:
+        queryset = queryset.order_by(order_column)
+    else:
+        queryset = queryset.order_by(order_column)[start:start + length]
+
+    return {
+        'items': queryset,
+        'count': count,
+        'total': total,
+        'draw': draw
+    }
 
 
 # Create your models here.

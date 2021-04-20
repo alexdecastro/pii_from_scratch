@@ -16,8 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# piiapi REST framework
+from rest_framework.routers import DefaultRouter
+from piiapi.views import (AddressesViewSet)
+# Alternate way: import piiapi
+
+router = DefaultRouter()
+router.register(r'addresses', AddressesViewSet)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # map 'http://127.0.0.1:800#/piiweb/' -> 'piiweb/urls.py'
     path('piiweb/', include('piiweb.urls')),
+
+    # map 'http://127.0.0.1:800#/api/ -> 'piiapi/urls.py'
+    path('api/', include(router.urls)),
+    # Alternate way: path('api/', include('piiapi.urls')),
 ]
