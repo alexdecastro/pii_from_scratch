@@ -41,7 +41,10 @@
 
         </div>
     </div>
-
+    {{  addr_id_list }}
+    <script>
+        var addr_id_list = {{  addr_id_list|safe }};
+    </script>
     <script src="{% static 'vendor/jquery/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'vendor/datatables/jquery.dataTables.js' %}"></script>
