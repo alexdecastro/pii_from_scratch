@@ -4,11 +4,16 @@
 {% block content %}
 
     <link href="{% static 'css/main.css' %}" rel="stylesheet">
+
+
     <link href="{% static 'css/participants.css' %}" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" type="text/css"/>
-    <link rel="stylesheet" href="{% static 'vendor/datatables/Responsive-2.2.5/css/responsive.bootstrap4.min.css' %}" type="text/css"/>
     <link rel="stylesheet" href="{% static 'vendor/datatables/DataTables-1.10.21/css/jquery.dataTables.min.css' %}" type="text/css"/>
-    <link rel="stylesheet" href="{% static 'vendor/datatables/Buttons-1.6.3/css/buttons.dataTables.min.css' %}" type="text/css"/>
+    <!--
+    <link rel="stylesheet" href="{ % static 'vendor/datatables/Responsive-2.2.5/css/responsive.bootstrap4.min.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{ % static 'vendor/datatables/Buttons-1.6.3/css/buttons.dataTables.min.css' %}" type="text/css"/>
+    -->
 
     <div class="row">
         <div class="main-card mb-3 card">
@@ -17,7 +22,7 @@
 
             <div class="container-fluid">
                 <div class="table-responsive">
-                    <table id="datatables" class="table table-striped table-hover">
+                    <table id="data_table_02" class="table table-striped table-hover">
 
                         <thead>
                         <tr>
@@ -50,10 +55,13 @@
     <script src="{% static 'vendor/datatables/jquery.dataTables.js' %}"></script>
     <script src="{% static 'js/addresses.js' %}"></script>
 
+    <!-- enable detail control -->
     <script src="{% static 'vendor/datatables/Responsive-2.2.5/js/dataTables.responsive.min.js' %}"></script>
-    <script src="{% static 'vendor/datatables/Buttons-1.6.3/js/dataTables.buttons.min.js' %}"></script>
-    <script src="{% static 'vendor/datatables/Buttons-1.6.3/js/buttons.flash.js' %}"></script>
-    <script src="{% static 'vendor/datatables/Buttons-1.6.3/js/buttons.html5.min.js' %}"></script>
-    <script src="{% static 'vendor/datatables/Buttons-1.6.3/js/buttons.print.min.js' %}"></script>
+    <!--
+    <script src="{ % static 'vendor/datatables/Buttons-1.6.3/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{ % static 'vendor/datatables/Buttons-1.6.3/js/buttons.flash.js' %}"></script>
+    <script src="{ % static 'vendor/datatables/Buttons-1.6.3/js/buttons.html5.min.js' %}"></script>
+    <script src="{ % static 'vendor/datatables/Buttons-1.6.3/js/buttons.print.min.js' %}"></script>
+    -->
 
 {% endblock %}

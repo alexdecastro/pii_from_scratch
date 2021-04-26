@@ -1,35 +1,44 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from piidb.models import (Addresses, Participants, ParticipantsAddresses, SchoolLists, Sites)
+from piiweb.forms import AddressesModelForm
 
 
-# Create your views here.
 def test_page(request):
     return HttpResponse('<h1>piiweb Test Page</h1>')
 
 
 def addressSelectView(request, pguid_id):
-    participants = Participants.objects.all()
-    for part in participants:
-        print("part.pguid: ", part.pguid)
+    if request.method == 'POST':
+        print("DEBUG: views.py: addressSelectView: request.POST: ", request.POST)
+        if 'delete_id' in request.POST:
+            delete_id = request.POST.get('delete_id')
+            print("--> views.py: addressSelectView: DELETE: delete_id:", delete_id)
+            # Addresses.objects.filter(addressid=delete_id).delete()
+            # ParticipantsAddresses.objects.filter(address_id=delete_id).delete()
 
-    # Get addresses associated with pguid
+        form = AddressesModelForm(request.POST)
+        if form.is_valid():
+            print("Form is valid")
+            new_input = form.save()
+
+    else:
+        print("DEBUG: views.py: addressSelectView: request.GET: ", request.GET)
+        form = AddressesModelForm()
+
+    # Create an array of address ids associated with this pguid
     addr_id_list = []
     parts_addrs = ParticipantsAddresses.objects.filter(pguid=pguid_id)
     for part_addr in parts_addrs:
         addr_id_list.append(part_addr.address_id)
-        unique_id = (part_addr.address_id, part_addr.pguid, part_addr.from_year, part_addr.to_year)
-        print("part_addr.unique_id: ", unique_id)
+    addr_id_list = list(set(addr_id_list))
 
     addresses = Addresses.objects.all()
-    for addr in addresses:
-        print("addr.addressid: ", addr.addressid)
 
     context = {
         'title': 'Address Select',
         'pguid': pguid_id,
         'addresses': addresses,
-        'participants': participants,
         'parts_addrs': parts_addrs,
         'addr_id_list': addr_id_list,
     }
@@ -41,18 +50,14 @@ def addressesView(request, pguid_id):
     for part in participants:
         print("part.pguid: ", part.pguid)
 
-    # Get addresses associated with pguid
+    # Create an array of address ids associated with this pguid
     addr_id_list = []
     parts_addrs = ParticipantsAddresses.objects.filter(pguid=pguid_id)
     for part_addr in parts_addrs:
         addr_id_list.append(part_addr.address_id)
-        unique_id = (part_addr.address_id, part_addr.pguid, part_addr.from_year, part_addr.to_year)
-        print("part_addr.unique_id: ", unique_id)
-
     addr_id_list = list(set(addr_id_list))
+
     addresses = Addresses.objects.all()
-    for addr in addresses:
-        print("addr.addressid: ", addr.addressid)
 
     context = {
         'title': 'Addresses',
