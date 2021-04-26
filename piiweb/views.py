@@ -1,5 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from piidb.models import (Addresses, Participants, ParticipantsAddresses, SchoolLists, Sites)
 from piiweb.forms import AddressesModelForm
 
@@ -67,3 +69,40 @@ def addressesView(request, pguid_id):
         'addr_id_list': addr_id_list,
     }
     return render(request, 'addresses.html', context)
+
+
+@csrf_exempt
+def create_part_addr(request, pguid_id, addr_id):
+    print("--> views.py: create_part_addr: pguid_id: ", pguid_id, " addr_id: ", addr_id)
+
+    from_year = 2000
+    to_year = 2002
+    address_type = "primary"
+    percentoftime = 100
+    participant = Participants.objects.get(pguid=pguid_id)
+    obj, created = ParticipantsAddresses.objects.update_or_create(
+        pguid=participant, address_id=addr_id,
+        defaults={'from_year': from_year, 'to_year': to_year,
+                  'addresstype': address_type, 'percentoftime': percentoftime}
+    )
+
+    response = {
+        'ok': True,
+        'pguid_id': pguid_id,
+        'addr_id': addr_id,
+    }
+    return JsonResponse(response)
+
+
+@csrf_exempt
+def delete_part_addr(request, pguid_id, addr_id):
+    print("--> views.py: delete_part_addr: pguid_id: ", pguid_id, " addr_id: ", addr_id)
+
+    ParticipantsAddresses.objects.filter(pguid_id=pguid_id, address_id=addr_id).delete()
+
+    response = {
+        'ok': True,
+        'pguid_id': pguid_id,
+        'addr_id': addr_id,
+    }
+    return JsonResponse(response)

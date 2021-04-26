@@ -22,7 +22,7 @@
                     <th>City</th>
                     <th>State</th>
                     <th>Zipcode</th>
-                    <th>Actions</th>
+                    <th>Attached</th>
                     <th>Delete</th>
                 </tr>
                 </thead>
@@ -41,7 +41,7 @@
                             {% endif %}
                             <td>
                                 <form method="POST">
-                                     {% csrf_token %}
+                                    {% csrf_token %}
                                     <input type="hidden" value="{{item.addressid}}" name="delete_id">
                                     <button type="Submit"class="btn btn-danger">Delete</button>
                                 </form>

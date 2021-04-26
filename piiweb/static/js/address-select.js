@@ -6,12 +6,34 @@ function handleButtonClick(element) {
     if (button_text === "Yes") {
         $(element).text("No");
         $(element).removeClass('btn-success');
-        $(element).addClass('btn-danger');
+        $(element).addClass('btn-warning');
+        delete_part_addr(pguid, addr_id);
     } else {
         $(element).text("Yes");
-        $(element).removeClass('btn-danger');
+        $(element).removeClass('btn-warning');
         $(element).addClass('btn-success');
+        create_part_addr(pguid, addr_id);
     }
+}
+
+function create_part_addr(pguid, addr_id) {
+        $.ajax({
+            type: "POST",
+            url: "/piiweb/addresses/create_part_addr/"+pguid+"/"+addr_id+"/",
+            success: function (response) {
+                console.log(response);
+            }
+        });
+}
+
+function delete_part_addr(pguid, addr_id) {
+        $.ajax({
+            type: "POST",
+            url: "/piiweb/addresses/delete_part_addr/"+pguid+"/"+addr_id+"/",
+            success: function (response) {
+                console.log(response);
+            }
+        });
 }
 
 $(document).ready(function() {
