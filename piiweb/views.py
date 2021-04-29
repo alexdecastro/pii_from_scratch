@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from piidb.models import (Addresses, Participants, ParticipantsAddresses, SchoolLists, Sites)
-from piiweb.forms import AddressesModelForm
+from piiweb.forms import addressSelectForm
 
 
 def test_page(request):
@@ -19,14 +19,14 @@ def addressSelectView(request, pguid_id):
             # Addresses.objects.filter(addressid=delete_id).delete()
             # ParticipantsAddresses.objects.filter(address_id=delete_id).delete()
 
-        form = AddressesModelForm(request.POST)
+        form = addressSelectForm(request.POST)
         if form.is_valid():
             print("Form is valid")
             new_input = form.save()
 
     else:
         print("DEBUG: views.py: addressSelectView: request.GET: ", request.GET)
-        form = AddressesModelForm()
+        form = addressSelectForm()
 
     # Create an array of address ids associated with this pguid
     addr_id_list = []
@@ -74,7 +74,6 @@ def addressesView(request, pguid_id):
 @csrf_exempt
 def create_part_addr(request, pguid_id, addr_id):
     print("--> views.py: create_part_addr: pguid_id: ", pguid_id, " addr_id: ", addr_id)
-
     from_year = 2000
     to_year = 2002
     address_type = "primary"
@@ -85,7 +84,6 @@ def create_part_addr(request, pguid_id, addr_id):
         defaults={'from_year': from_year, 'to_year': to_year,
                   'addresstype': address_type, 'percentoftime': percentoftime}
     )
-
     response = {
         'ok': True,
         'pguid_id': pguid_id,
@@ -97,9 +95,7 @@ def create_part_addr(request, pguid_id, addr_id):
 @csrf_exempt
 def delete_part_addr(request, pguid_id, addr_id):
     print("--> views.py: delete_part_addr: pguid_id: ", pguid_id, " addr_id: ", addr_id)
-
     ParticipantsAddresses.objects.filter(pguid_id=pguid_id, address_id=addr_id).delete()
-
     response = {
         'ok': True,
         'pguid_id': pguid_id,

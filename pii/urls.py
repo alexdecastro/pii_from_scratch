@@ -26,8 +26,9 @@ router.register(r'addresses', AddressesViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     # map 'http://127.0.0.1:800#/piiweb/' -> 'piiweb/urls.py'
-    path('piiweb/', include('piiweb.urls')),
+    path('pii/', include('piiweb.urls')),
 
     # map 'http://127.0.0.1:800#/api/ -> 'piiapi/urls.py'
     path('api/', include(router.urls)),

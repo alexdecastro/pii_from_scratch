@@ -2,7 +2,7 @@ from django import forms
 from piidb.models import (Addresses)
 
 
-class AddressesModelForm(forms.ModelForm):
+class addressSelectForm(forms.ModelForm):
 
     class Meta:
         model = Addresses

@@ -19,9 +19,11 @@
                     <th>AddressID</th>
                     <th>Street Number</th>
                     <th>Street Name</th>
+                    <th>Apartment</th>
                     <th>City</th>
                     <th>State</th>
                     <th>Zipcode</th>
+                    <th>Google PlaceID</th>
                     <th>Attached</th>
                     <th>Delete</th>
                 </tr>
@@ -31,9 +33,11 @@
                             <td>{{ item.addressid }}</td>
                             <td>{{ item.streetnumber }}</td>
                             <td>{{ item.streetname }}</td>
+                            <td>{{ item.aptnumber }}</td>
                             <td>{{ item.city }}</td>
                             <td>{{ item.state }}</td>
                             <td>{{ item.zipcode }}</td>
+                            <td>{{ item.google_place_id }}</td>
                             {% if item.addressid in addr_id_list %}
                                 <td><button id="{{ item.addressid }}" type="button" class="btn btn-success" onclick="handleButtonClick(this)">Yes</button></td>
                             {% else %}
