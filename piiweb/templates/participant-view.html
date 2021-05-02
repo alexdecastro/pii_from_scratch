@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            <div class="page-title-icon">
+                <i class="pe-7s-graph text-success">
+                </i>
+            </div>
+            <div>Participant Information
+                <div class="page-title-subheading">Edit, Act on a Participant
+                </div>
+            </div>
+        </div>
+        <div class="page-title-actions">
+            <button data-toggle="tooltip" title="Event Logs" data-placement="bottom"
+                class="mb-2 mr-2 btn-transition btn btn-outline-primary" id="EventLogs">
+                Activity Logs
+            </button>
+            <button data-toggle="tooltip" title="Participant/Contact Relationships" data-placement="bottom"
+                class="mb-2 mr-2 btn-transition btn btn-outline-primary" id="Locator">
+                Locator Form
+            </button>
+            <button data-toggle="tooltip" title="Edit Residentail Information" data-placement="bottom"
+                class="mb-2 mr-2 btn-transition btn btn-outline-primary" id="Residential">
+                Residential Form
+            </button>
+            <button data-toggle="tooltip" title="Edit Informant" data-placement="bottom"
+                class="mb-2 mr-2 btn-transition btn btn-outline-primary" id="Informant">
+                Informant Form
+            </button>
+            <button data-toggle="tooltip" title="School/Teacher" data-placement="bottom"
+                class="mb-2 mr-2 btn-transition btn btn-outline-primary" id="School">
+                School/Teacher Form
+            </button>
+            <button data-toggle="tooltip" title="REDCap Schedule" data-placement="bottom"
+                class=" mb-2 mr-2 btn-transition btn btn-outline-primary" id="OpenSchedule">
+                REDCap
+            </button>
+            <button data-toggle="tooltip" title="REDCap Survey" data-placement="bottom"
+                class=" mb-2 mr-2 btn-transition btn btn-outline-primary" id="OpenSchedule">
+                Surveys
+            </button>
+
+            <button data-toggle="tooltip" title="Open Millisecond" data-placement="bottom"
+                class=" mb-2 mr-2 btn-transition btn btn-outline-primary" id="OpenMilliSecond">
+                Millisecond
+            </button>
+            <button data-toggle="tooltip" title="Open KSADS" data-placement="bottom"
+                class=" mb-2 mr-2 btn-transition btn btn-outline-primary" id="OpenKSADS">
+                KSADS
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="card-body">
+
+    {% crispy form %}
+
+</div>
+
+<script src="{% static 'vendor/jquery/jquery-3.5.1.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/participant-view.js' %}" ></script>
+
+{% endblock %}

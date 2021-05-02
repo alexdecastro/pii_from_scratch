@@ -1,13 +1,41 @@
-<!DOCTYPE html>
-<html>
+{% load static %}
+<!doctype html>
+<html lang="en">
+
 <head>
-    {% if title %}
-        <title>{{ title }}</title>
-    {% else %}
-        <title>Django AppName - no title</title>
-    {% endif %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>ABCD PII Dashboard </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <meta name="description" content="ABCD PII Dashboard.">
+    <meta name="msapplication-tap-highlight" content="no">
+    <!--
+    ABCD PII database application is based on ArchitectUI HTML Theme Dashboard - v1.0.0
+     -->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+
 </head>
 <body>
-    {% block content %}{% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'vendor/jquery/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/jquery.dataTables.js' %}"></script>
+
+    <script src="{% static 'vendor/datatables/Responsive-2.2.5/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/Buttons-1.6.3/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/DataTables-1.10.21/js/jquery.dataTables.min.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+        });
+    </script>
+
 </body>
+
 </html>

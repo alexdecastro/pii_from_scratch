@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="app-page-title">
+    <div class="page-title-wrapper">
+        <div class="page-title-heading">
+            <div class="page-title-icon">
+                <i class="pe-7s-graph text-success">
+                </i>
+            </div>
+            <div>Address Information
+                <div class="page-title-subheading">Create or edit an address
+                </div>
+            </div>
+        </div>
+        <div class="page-title-actions">
+            <button data-toggle="tooltip" title="Do Something" data-placement="bottom"
+                class="mb-2 mr-2 btn-transition btn btn-outline-primary" id="DoSomething">
+                Do Something
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="card-body">
+    <div id="id_google_map"></div>
+        <style>#id_google_map {height: 400px; margin:0px}</style>
+    <div>
+        <label id="location_details"></label>
+    </div>
+    {% crispy form %}
+</div>
+
+<script src="{% static 'vendor/jquery/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=weekly&libraries=places&key={{ GOOGLE_MAPS_API_KEY }}"></script>
+<script src="{% static 'js/address-view.js' %}"></script>
+
+{% endblock %}

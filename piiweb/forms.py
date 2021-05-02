@@ -1,5 +1,254 @@
 from django import forms
-from piidb.models import (Addresses)
+from piidb.models import (Addresses, Participants)
+
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column
+from crispy_forms.bootstrap import Tab, TabHolder, InlineRadios
+
+
+class participantForm(forms.ModelForm):
+
+    class Meta:
+        model = Participants
+        fields = ('pguid', 'firstname', 'lastname', 'middlename','gender','dob','placeofbirth','phone1','email1',
+                  'cotwin','nickname', 'legalfirstname', 'legalmiddlename','legallastname','status', 'enrolledstatus',
+                  'expectedvisit','assentdate','alternateid','participantnotes', 'informantnotes','history',
+                  'schoolname','teachername','bpmtvisit')
+        labels = {
+            "pguid" : "Participant ID",
+            "firstname": "First Name at Birth",
+            "middlename": "Middle Name at Birth",
+            "lastname": "Last Name at Birth",
+            "legalfirstname": "Legal First Name",
+            "legalmiddlename": "legal Middle Name",
+            "legallastname": "Legal Last Name",
+            "gender": "Gender at Birth",
+            "dob": "Birth Day",
+            "placeofbirth": "Birth Place",
+            'status': "Status",
+            'enrolledstatus': "Current Status",
+            'phone1': "Phone",
+            'email1': "Email",
+            'expectedvisit': "Expect Next Visit",
+            'assentdate': "Baseline Visit Date",
+            'alternateid': "Alternate ID",
+            'participantnotes': "Participant Notes",
+            'informantnotes': "Informant Notes",
+            'history': "Visit History",
+            'schoolname': "School Name",
+            'teachername': "Teacher Name",
+            'bpmtvisit': "BPM-T",
+            'cotwin': "Co-Twin"
+        }
+
+    readonly = ('pguid','dob','gender','firstname','lastname','middlename','assentdate','alternateid','cotwin',
+                'expectedvisit')
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+
+        self.fields['participantnotes'].widget = forms.Textarea()
+        self.fields['informantnotes'].widget = forms.Textarea()
+        self.fields['history'].widget = forms.Textarea()
+
+        GENDER_AT_BIRTH = (('male','male'), ('female', 'female'))
+        CO_TWIN = (('1','Yes'), ('2', 'No'))
+        ENROLLEDSTATUS = (('1','Active'), ('2', 'Withdrawn'))
+
+        self.fields['gender'] = forms.TypedChoiceField(
+            label='Gender at Birth',
+            widget=forms.RadioSelect(),
+            choices=GENDER_AT_BIRTH,
+            empty_value=0,
+            coerce=int,
+        )
+
+        self.fields['cotwin'] = forms.TypedChoiceField(
+            label='Co-Twin',
+            widget=forms.RadioSelect(),
+            choices=CO_TWIN,
+            empty_value=0,
+            coerce=int,
+        )
+
+        self.fields['enrolledstatus'] = forms.TypedChoiceField(
+            label='Current Status',
+            widget=forms.RadioSelect(),
+            choices=ENROLLEDSTATUS,
+            empty_value=0,
+        )
+
+        for x in self.readonly:
+            self.fields[x].widget.attrs['disabled'] = 'disabled'
+            self.fields[x].required = False
+
+        self.helper.layout = Layout(
+
+            TabHolder(
+                Tab('Participant',
+                    Row(
+                        Column('pguid',  css_class='form-group col-md-6 mb-0'),
+                        Column(InlineRadios('enrolledstatus'),  css_class='form-group col-md-6 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('firstname',  css_class='form-group col-md-4 mb-0'),
+                        Column('middlename',  css_class='form-group col-md-4 mb-0'),
+                        Column('lastname',  css_class='form-group col-md-4 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('dob',  css_class='form-group col-md-4 mb-0 '),
+                        Column(InlineRadios('gender'),  css_class='form-group col-md-4 mb-0 '),
+                        Column(InlineRadios('cotwin'),  css_class='form-group col-md-4 mb-0 '),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('legalfirstname',  css_class='form-group col-md-4 mb-0'),
+                        Column('legalmiddlename',  css_class='form-group col-md-4 mb-0'),
+                        Column('legallastname',  css_class='form-group col-md-4 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('nickname',   css_class='form-group col-md-4 mb-0'),
+                        Column('phone1',  css_class='form-group col-md-4 mb-0'),
+                        Column('email1',  css_class='form-group col-md-4 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('alternateid',  css_class='form-group col-md-4 mb-0'),
+                        Column('assentdate',  css_class='form-group col-md-4 mb-0'),
+                        Column('expectedvisit',  css_class='form-group col-md-4 mb-0'),
+                         css_class='form-row'
+                    ),
+                    Row(
+                        Column('participantnotes',   css_class='form-group col-md-12 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Submit('submit', 'Save')
+                ),
+            )
+        )
+
+    def clean(self):
+        data = super(participantForm, self).clean()
+        for x in self.readonly:
+            data[x] = getattr(self.instance, x)
+        return data
+
+
+class participantNewForm(forms.ModelForm):
+
+    class Meta:
+        model = Participants
+        fields = ('pguid', 'firstname', 'lastname', 'middlename','gender','dob','placeofbirth','phone1','email1',
+                  'cotwin','nickname', 'legalfirstname', 'legalmiddlename','legallastname','status', 'enrolledstatus',
+                  'expectedvisit','assentdate','alternateid','participantnotes', 'informantnotes','history',
+                  'schoolname','teachername', 'bpmtvisit')
+        labels = {
+            "pguid" : "Participant ID",
+            "firstname": "First Name at Birth",
+            "middlename": "Middle Name at Birth",
+            "lastname": "Last Name at Birth",
+            "legalfirstname": "Legal First Name",
+            "legalmiddlename": "legal Middle Name",
+            "legallastname": "Legal Last Name",
+            "gender": "Gender at Birth",
+            "dob": "Birth Day",
+            "placeofbirth": "Birth Place",
+            'status': "Status",
+            'enrolledstatus': "Current Status",
+            'expectedvisit': "Expect Next Visit",
+            'phone1': "Phone",
+            'email1': "Email",
+            'assentdate': "Baseline Visit Date",
+            'alternateid': "Alternate ID",
+            'participantnotes': "Participant Note",
+            'informantnotes': "Informat Note",
+            'history': "Visit History",
+            'schoolname': "School Name",
+            'teachername': "Teacher Name",
+            'bpmtvisit': "BPM-T"
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+        GENDER_AT_BIRTH = (('1','male'), ('2', 'female'))
+        CO_TWIN = (('1','Yes'), ('2', 'No'))
+        ENROLLEDSTATUS = (('1','Active'), ('2', 'Withdrawn'))
+
+        self.fields['gender'] = forms.TypedChoiceField(
+            label='Gender Select',
+            widget=forms.RadioSelect(),
+            choices=GENDER_AT_BIRTH,
+            empty_value=0,
+            coerce=int,
+        )
+
+        self.fields['cotwin'] = forms.TypedChoiceField(
+                    widget=forms.RadioSelect(),
+                    choices=CO_TWIN,
+                    empty_value=0,
+                    coerce=int,
+                )
+
+        self.fields['enrolledstatus'] = forms.TypedChoiceField(
+                    widget=forms.RadioSelect(),
+                    choices=ENROLLEDSTATUS,
+                    empty_value=0,
+                    coerce=int,
+        )
+
+        #forms.RadioSelect(choices=GENDER_AT_BIRTH)
+        self.fields['informantnotes'].widget = forms.Textarea()
+        self.fields['history'].widget = forms.Textarea()
+
+        self.helper.layout = Layout(
+            TabHolder(
+                Tab('Participant Information',
+                    Row(
+                        Column('pguid',  css_class='form-group col-md-6 mb-0'),
+                        Column(InlineRadios('enrolledstatus'),  css_class='form-group col-md-6 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('firstname',  css_class='form-group col-md-4 mb-0'),
+                        Column('middlename',  css_class='form-group col-md-4 mb-0'),
+                        Column('lastname',  css_class='form-group col-md-4 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('dob',  css_class='form-group col-md-4 mb-0 '),
+                        Column(InlineRadios('gender'),  css_class='form-group col-md-4 mb-0 '),
+                        Column(InlineRadios('cotwin'),  css_class='form-group col-md-4 mb-0 '),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('legalfirstname',  css_class='form-group col-md-4 mb-0'),
+                        Column('legalmiddlename',  css_class='form-group col-md-4 mb-0'),
+                        Column('legallastname',  css_class='form-group col-md-4 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('nickname',   css_class='form-group col-md-4 mb-0'),
+                        Column('phone1',  css_class='form-group col-md-4 mb-0'),
+                        Column('email1',  css_class='form-group col-md-4 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Submit('submit', 'Save')
+                )
+            )
+        )
+
+    def clean(self):
+        data = super(participantNewForm, self).clean()
 
 
 class addressSelectForm(forms.ModelForm):
@@ -7,3 +256,74 @@ class addressSelectForm(forms.ModelForm):
     class Meta:
         model = Addresses
         fields = "__all__"
+
+
+class addressForm(forms.ModelForm):
+
+    address_search = forms.CharField( label="Search for address", max_length=200, widget=forms.TextInput(),required=False)
+
+    class Meta:
+        model = Addresses
+        fields = ('addressid', 'streetnumber', 'streetname', 'aptnumber', 'nearest', 'city', 'state', 'zipcode',
+                  'google_place_id', 'google_latitude', 'google_longitude', 'google_result')
+        labels = {
+            "addressid" : "Address ID",
+            "streetnumber" : "Street Number",
+            "streetname" : "Street Name",
+            "aptnumber" : "Apt Number",
+            "nearest": "Nearest cross street",
+            "zipcode" : "ZipCode",
+            "google_place_id" : "Google Place ID",
+            "google_latitude": "Latitude",
+            "google_longitude": "Longitude",
+            "google_result": "Result"
+        }
+
+    # readonly = ('streetnumber', 'streetname', 'aptnumber', 'nearest', 'city', 'state', 'zipcode', 'google_place_id')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.fields['address_search'] = forms.CharField(label='Search for address', initial="", disabled=False, required=False)
+
+        #for x in self.readonly:
+            #self.fields[x].widget.attrs['disabled'] = 'disabled'
+            #self.fields[x].required = False
+
+        self.helper.layout = Layout(
+            TabHolder(
+                Tab('Search for address',
+                    Row(
+                        Column('address_search', css_class='form-group col-md-12 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('addressid',  css_class='form-group col-md-6 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('streetnumber',  css_class='form-group col-md-3 mb-0'),
+                        Column('streetname',  css_class='form-group col-md-6 mb-0'),
+                        Column('aptnumber',  css_class='form-group col-md-3 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('city',  css_class='form-group col-md-4 mb-0'),
+                        Column('state',  css_class='form-group col-md-4 mb-0'),
+                        Column('zipcode',  css_class='form-group col-md-4 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Row(
+                        Column('google_place_id', css_class='form-group col-md-4 mb-0'),
+                        Column('google_latitude', css_class='form-group col-md-4 mb-0'),
+                        Column('google_longitude', css_class='form-group col-md-4 mb-0'),
+                        css_class='form-row'
+                    ),
+                    Submit('submit', 'Save')
+                )
+            )
+        )
+
+    def clean(self):
+        data = super(addressForm, self).clean()
