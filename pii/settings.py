@@ -29,6 +29,7 @@ with open(os.path.join(BASE_DIR + '/pii/secure/tokens.json')) as data_file:
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-*a41mbl^9^)k*$(45#gi2_lko#ww2k(uid1)(^p*5tpv0iuyy='
 SECRET_KEY = tokens.loc["SECRET_KEY", 'token']
+GOOGLE_MAPS_API_KEY = tokens.loc["GOOGLE_MAPS_API_KEY", 'token']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -45,10 +46,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms', # Use crispy form
     'piiapi',
     'piidb',
     'piiweb',
 ]
+
+# Crispy Forms should use Boostrap 4
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
