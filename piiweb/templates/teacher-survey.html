@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="card-body">
+
+    {% crispy form %}
+
+</div>
+
+<script src="{% static 'vendor/jquery/jquery-3.5.1.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+{% endblock %}

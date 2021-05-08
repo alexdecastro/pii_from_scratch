@@ -6,12 +6,20 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, UpdateView
 
 from pii import settings
-from piidb.models import (Addresses, Participants, ParticipantsAddresses, SchoolLists, Sites)
-from piiweb.forms import addressSelectForm, addressForm, participantForm, participantNewForm
+from piidb.models import (Addresses, Participants, ParticipantsAddresses, SchoolLists, Sites, TeacherSurvey)
+from piiweb.forms import addressSelectForm, addressForm, participantForm, participantNewForm, teacherSurveyForm
 
 
 def test_page(request):
     return HttpResponse('<h1>piiweb Test Page</h1>')
+
+
+class teacherSurveyView(UpdateView):
+    model = TeacherSurvey
+    form_class = teacherSurveyForm
+    slug_field = 'teachersurveyid'
+    slug_url_kwarg = 'teachersurveyid'
+    template_name = 'teacher-survey.html'
 
 
 class participantView(UpdateView):

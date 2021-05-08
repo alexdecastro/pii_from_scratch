@@ -209,3 +209,38 @@ class Sites(models.Model):
     class Meta:
         managed = False
         db_table = 'sites'
+
+
+class TeacherSurvey(models.Model):
+    teachersurveyid = models.CharField(db_column='teacherSurveyID', primary_key=True, max_length=32)  # Field name made lowercase.
+    actstooyoung = models.IntegerField(db_column='actsTooYoung', blank=True, null=True)  # Field name made lowercase.
+    arguesalot = models.IntegerField(db_column='arguesALot', blank=True, null=True)  # Field name made lowercase.
+    bpmtdirty = models.CharField(db_column='bpmtDirty', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    cantconcentrate = models.CharField(db_column='cantConcentrate', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    cantsitstill = models.IntegerField(db_column='cantSitStill', blank=True, null=True)  # Field name made lowercase.
+    destroysproperty = models.IntegerField(db_column='destroysProperty', blank=True, null=True)  # Field name made lowercase.
+    disobedient = models.IntegerField(blank=True, null=True)
+    failstofinish = models.IntegerField(db_column='failsToFinish', blank=True, null=True)  # Field name made lowercase.
+    fearful = models.IntegerField(blank=True, null=True)
+    feelsworthless = models.IntegerField(db_column='feelsWorthless', blank=True, null=True)  # Field name made lowercase.
+    guilty = models.IntegerField(blank=True, null=True)
+    impulsive = models.IntegerField(blank=True, null=True)
+    inattentive = models.IntegerField(blank=True, null=True)
+    notes = models.CharField(max_length=512, blank=True, null=True)
+    numdays = models.IntegerField(db_column='numDays', blank=True, null=True)  # Field name made lowercase.
+    pguid = models.ForeignKey(Participants, models.DO_NOTHING, db_column='pGUID', blank=True, null=True)  # Field name made lowercase.
+    school = models.CharField(max_length=128, blank=True, null=True)
+    selfconscious = models.IntegerField(db_column='selfConscious', blank=True, null=True)  # Field name made lowercase.
+    serverdate = models.CharField(max_length=32, blank=True, null=True)
+    sessionid = models.CharField(db_column='sessionID', max_length=32, blank=True, null=True)  # Field name made lowercase.
+    stubborn = models.IntegerField(blank=True, null=True)
+    teachername = models.CharField(db_column='teacherName', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    teacherrole = models.CharField(db_column='teacherRole', max_length=32, blank=True, null=True)  # Field name made lowercase.
+    temper = models.IntegerField(blank=True, null=True)
+    threatens = models.IntegerField(blank=True, null=True)
+    unhappy = models.IntegerField(blank=True, null=True)
+    visit = models.CharField(max_length=32, blank=True, null=True)
+    worries = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'teacher_survey'

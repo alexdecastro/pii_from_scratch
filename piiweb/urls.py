@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('test_page/', views.test_page, name='piiweb_test_page'),
+    path('teacher-survey/<slug:teachersurveyid>/', views.teacherSurveyView.as_view(), name='teacherSurveyView'),
     path('participants/participant-view/<slug:pguid>/', views.participantView.as_view(), name='participantView'),
     path('participants/participant-new/', views.participantNewView.as_view(), name='participantNewView'),
     path('addresses/address-view/<slug:addr_id>/', views.addressView.as_view(), name='addressView'),

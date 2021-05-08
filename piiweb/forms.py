@@ -1,9 +1,181 @@
 from django import forms
-from piidb.models import (Addresses, Participants)
+from piidb.models import (Addresses, Participants, TeacherSurvey)
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
 from crispy_forms.bootstrap import Tab, TabHolder, InlineRadios
+
+
+class teacherSurveyForm(forms.ModelForm):
+
+    class Meta:
+        model = TeacherSurvey
+        fields = "__all__"
+        labels = {
+            "teachersurveyid" : "Teacher Survey ID",
+            "pguid" : "Participant ID",
+            "teachername": "Teacher's Name",
+            "teacherrole": "Teacher's Role",
+        }
+
+    readonly = ('teachersurveyid', 'pguid')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+        CHOICES = (('0','Not True'), ('1', 'Somewhat True'), ('2', 'Very True'))
+        self.fields['actstooyoung'] = forms.TypedChoiceField(
+            label='1. Acts too young for his/her age.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['arguesalot'] = forms.TypedChoiceField(
+            label='2. Argues a lot.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['failstofinish'] = forms.TypedChoiceField(
+            label='3. Fails to finish things he/she starts.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['cantconcentrate'] = forms.TypedChoiceField(
+            label='4. Can’t concentrate, can’t pay attention for long.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['cantsitstill'] = forms.TypedChoiceField(
+            label='5. Can’t sit still, restless, or hyperactive.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['destroysproperty'] = forms.TypedChoiceField(
+            label='6. Destroys property belonging to others.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['disobedient'] = forms.TypedChoiceField(
+            label='7. Disobedient at school.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['feelsworthless'] = forms.TypedChoiceField(
+            label='8. Feels worthless or inferior.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['impulsive'] = forms.TypedChoiceField(
+            label='9. Impulsive or acts without thinking.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['fearful'] = forms.TypedChoiceField(
+            label='10. Too fearful or anxious.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['guilty'] = forms.TypedChoiceField(
+            label='11. Feels too guilty.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['selfconscious'] = forms.TypedChoiceField(
+            label='12. Self-conscious or easily embarrassed.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['inattentive'] = forms.TypedChoiceField(
+            label='13. Inattentive or easily distracted.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['stubborn'] = forms.TypedChoiceField(
+            label='14. Stubborn, sullen, or irritable.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['temper'] = forms.TypedChoiceField(
+            label='15. Temper tantrums or hot temper.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['threatens'] = forms.TypedChoiceField(
+            label='16. Threatens people.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['unhappy'] = forms.TypedChoiceField(
+            label='17. Unhappy, sad, or depressed.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+        self.fields['worries'] = forms.TypedChoiceField(
+            label='18. Worries.', widget=forms.RadioSelect(), choices=CHOICES, empty_value=0, coerce=int
+        )
+
+        for x in self.readonly:
+            self.fields[x].widget.attrs['disabled'] = 'disabled'
+            self.fields[x].required = False
+
+        self.helper.layout = Layout(
+            Row(
+                Column('teachersurveyid', css_class='form-group col-md-4 mb-0'),
+                Column('pguid', css_class='form-group col-md-4 mb-0'),
+                css_class='form-row'
+            ),
+            Row(
+                Column('teachername', css_class='form-group col-md-4 mb-0'),
+                Column('teacherrole', css_class='form-group col-md-4 mb-0'),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('actstooyoung'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('arguesalot'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('failstofinish'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('cantconcentrate'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('cantsitstill'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('destroysproperty'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('disobedient'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('feelsworthless'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('impulsive'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('fearful'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('guilty'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('selfconscious'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('inattentive'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('stubborn'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('temper'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('threatens'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('unhappy'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Row(
+                Column(InlineRadios('worries'),  css_class='form-group col-md-8 mb-0 '),
+                css_class='form-row'
+            ),
+            Submit('submit', 'Submit')
+        )
+
+    def clean(self):
+        data = super(teacherSurveyForm, self).clean()
+        for x in self.readonly:
+            data[x] = getattr(self.instance, x)
+        return data
 
 
 class participantForm(forms.ModelForm):
@@ -327,3 +499,4 @@ class addressForm(forms.ModelForm):
 
     def clean(self):
         data = super(addressForm, self).clean()
+
