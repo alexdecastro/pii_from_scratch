@@ -19,8 +19,37 @@
 </head>
 <body>
 
-    {% block content %}
-    {% endblock %}
+    <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
+
+        <!-- Topbar -->
+        {% include 'components/_topbar.html' with groups=groups name=name %}
+        <!-- End of Topbar -->
+
+        <!-- main contents need to include the side bar and footer -->
+        <div class="app-main">
+            <!-- sidebar -->
+            {% include 'components/_sidebar.html' %}
+            <!-- End of sidebar -->
+
+
+
+            <div class="app-main__outer">
+
+
+                 <div class="app-main__inner">
+
+                    {% block content %}
+                    {% endblock %}
+                 </div>
+
+                <!-- Footer -->
+                {% include 'components/_footer.html' %}
+
+                <!-- End of Footer -->
+            </div>
+        <!-- End of Main Content -->
+        </div>
+    </div>
 
     <!-- Custom scripts for all pages-->
     <script src="{% static 'js/main.js' %}"></script>
