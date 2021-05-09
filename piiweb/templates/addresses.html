@@ -110,20 +110,14 @@
                         <th>State</th>
                         <th>Zipcode</th>
                         <th>Google PlaceID</th>
+                        <th>Show</th>
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
                     </thead>
                     {% for item in addresses %}
                             <tr data-hidden="{{ item.streetname }}">
-                                <td>
-                                    <button
-                                        type="button"
-                                        class="btn btn-default"
-                                        data-type="show"
-                                        data-address="{{ item.streetnumber }} {{ item.streetname }} {{ item.city }}, {{ item.state }}  {{ item.zipcode }}"
-                                        onclick="handleButtonClick(this)">{{ item.addressid }}</button>
-                                </td>
+                                <td>{{ item.addressid }}</td>
                                 <td>{{ item.streetnumber }}</td>
                                 <td>{{ item.streetname }}</td>
                                 <td>{{ item.aptnumber }}</td>
@@ -131,6 +125,14 @@
                                 <td>{{ item.state }}</td>
                                 <td>{{ item.zipcode }}</td>
                                 <td>{{ item.google_place_id }}</td>
+                                <td>
+                                    <button
+                                        type="button"
+                                        class="btn btn-default"
+                                        data-type="show"
+                                        data-address="{{ item.streetnumber }} {{ item.streetname }} {{ item.city }}, {{ item.state }}  {{ item.zipcode }}"
+                                        onclick="handleButtonClick(this)">Show</button>
+                                </td>
                                 <td>
                                     <button
                                         id="{{ item.addressid }}"

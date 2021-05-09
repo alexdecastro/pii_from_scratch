@@ -7,7 +7,7 @@ For each map, create HTML elements with prefix: 'id_prefix'
 <input type="text" id="id_city" disabled="">
 <input type="text" id="id_state" disabled="">
 <input type="text" id="id_zipcode" disabled="">
-<input type="text" id="id_address_search">
+<input type="text" id="id_google_query">
 <input type="text" id="id_addressid">
 <input type="text" id="id_google_place_id">
 <input type="text" id="id_google_latitude">
@@ -32,7 +32,7 @@ $(document).ready(function() {
             $(this).removeAttr('disabled');
         })
     });
-    $('#id_ddresses').on('click', function (e) {
+    $('#id_addresses').on('click', function (e) {
         var url = '/pii/addresses/';
         location.href = url;
     });
@@ -49,27 +49,31 @@ function addressFromAddressFields(id_prefix) {
 
 function initializeGoogleMap(id_prefix) {
 
-    // Disable the address fields since they will be automatically filled in
-    $('#'+id_prefix+'_streetnumber').prop('disabled', true);
-    $('#'+id_prefix+'_streetnumber').addClass("enable_save");
-    $('#'+id_prefix+'_streetname').prop("disabled", true);
-    $('#'+id_prefix+'_streetname').addClass("enable_save");
-    $('#'+id_prefix+'_city').prop("disabled", true);
-    $('#'+id_prefix+'_city').addClass("enable_save");
-    $('#'+id_prefix+'_state').prop("disabled", true);
-    $('#'+id_prefix+'_state').addClass("enable_save");
-    $('#'+id_prefix+'_zipcode').prop("disabled", true);
-    $('#'+id_prefix+'_zipcode').addClass("enable_save");
-    $('#'+id_prefix+'_addressid').prop("disabled", true);
+    // Mark address fields that will be disabled and automatically filled in
     $('#'+id_prefix+'_addressid').addClass("enable_save");
-    $('#'+id_prefix+'_google_place_id').prop("disabled", true);
+    $('#'+id_prefix+'_streetnumber').addClass("enable_save");
+    $('#'+id_prefix+'_streetname').addClass("enable_save");
+    $('#'+id_prefix+'_nearest').addClass("enable_save");
+    $('#'+id_prefix+'_city').addClass("enable_save");
+    $('#'+id_prefix+'_state').addClass("enable_save");
+    $('#'+id_prefix+'_zipcode').addClass("enable_save");
+    $('#'+id_prefix+'_google_zipsuffix').addClass("enable_save");
+    $('#'+id_prefix+'_google_neighborhood').addClass("enable_save");
+    $('#'+id_prefix+'_google_county').addClass("enable_save");
+    $('#'+id_prefix+'_google_country').addClass("enable_save");
     $('#'+id_prefix+'_google_place_id').addClass("enable_save");
-    $('#'+id_prefix+'_google_latitude').prop("disabled", true);
     $('#'+id_prefix+'_google_latitude').addClass("enable_save");
-    $('#'+id_prefix+'_google_longitude').prop("disabled", true);
     $('#'+id_prefix+'_google_longitude').addClass("enable_save");
+    $('#'+id_prefix+'_google_result').addClass("enable_save");
 
-    let id = id_prefix+"_address_search";
+    // Disable the address fields and save button
+    $('.enable_save').each(function (e) {
+        $(this).prop("disabled", true);
+    })
+    $('#submit-id-submit').prop("disabled", true);
+
+    // Address search field
+    let id = id_prefix+"_google_query";
     let autocomplete = new google.maps.places.Autocomplete(document.getElementById(id));
     google.maps.event.addListener(autocomplete, 'place_changed', function () {
 
@@ -85,12 +89,21 @@ function initializeGoogleMap(id_prefix) {
         console.log("geocodeDetails:");
         console.table(geocodeDetails);
 
+        // Clear all the address fields, except for the addressid
+        $('.enable_save').each(function (e) {
+            if ($(this).attr('id') !== "id_addressid") {
+                $(this).val("");
+            }
+        })
+
         if ($('#'+id_prefix+'_addressid').val() === "") {
             $('#'+id_prefix+'_addressid').val(uniqId("ADDR_"));
         }
         $('#'+id_prefix+'_google_place_id').val(place.place_id);
         $('#'+id_prefix+'_google_latitude').val(place.geometry.location.lat());
         $('#'+id_prefix+'_google_longitude').val(place.geometry.location.lng());
+        $('#'+id_prefix+'_google_result').val(place.formatted_address);
+        $('#submit-id-submit').prop("disabled", false);
 
         var address_components = place.address_components;
         place.address_components.forEach(function(address_component) {
@@ -104,19 +117,25 @@ function initializeGoogleMap(id_prefix) {
                 $('#'+id_prefix+'_streetname').val(short_name);
             } else if (type === "neighborhood") {
                 console.log("Neighborhood: " + short_name);
+                $('#'+id_prefix+'_google_neighborhood').val(short_name);
             } else if (type === "locality") {
                 console.log("City: " + short_name);
                 $('#'+id_prefix+'_city').val(short_name);
             } else if (type === "administrative_area_level_2") {
                 console.log("County: " + short_name);
+                $('#'+id_prefix+'_google_county').val(short_name);
             } else if (type === "administrative_area_level_1") {
                 console.log("State: " + short_name);
                 $('#'+id_prefix+'_state').val(short_name);
+            } else if (type === "country") {
+                console.log("Country: " + short_name);
+                $('#'+id_prefix+'_google_country').val(short_name);
             } else if (type === "postal_code") {
                 console.log("Zipcode: " + short_name);
                 $('#'+id_prefix+'_zipcode').val(short_name);
             } else if (type === "postal_code_suffix") {
                 console.log("Zip Suffix: " + short_name);
+                $('#'+id_prefix+'_google_zipsuffix').val(short_name);
             } else {
                 console.log("address_component.short_name: " + short_name);
             }

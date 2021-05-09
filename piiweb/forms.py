@@ -432,12 +432,11 @@ class addressSelectForm(forms.ModelForm):
 
 class addressForm(forms.ModelForm):
 
-    address_search = forms.CharField( label="Search for address", max_length=200, widget=forms.TextInput(),required=False)
+    # address_search = forms.CharField( label="Search for address", max_length=200, widget=forms.TextInput(),required=False)
 
     class Meta:
         model = Addresses
-        fields = ('addressid', 'streetnumber', 'streetname', 'aptnumber', 'nearest', 'city', 'state', 'zipcode',
-                  'google_place_id', 'google_latitude', 'google_longitude', 'google_result')
+        fields = "__all__"
         labels = {
             "addressid" : "Address ID",
             "streetnumber" : "Street Number",
@@ -445,10 +444,18 @@ class addressForm(forms.ModelForm):
             "aptnumber" : "Apt Number",
             "nearest": "Nearest cross street",
             "zipcode" : "ZipCode",
+            "google_zipsuffix" : "Suffix",
+
+            "google_neighborhood": "Neighborhood",
+            "google_county": "County",
+            "google_country": "Country",
+
             "google_place_id" : "Google Place ID",
             "google_latitude": "Latitude",
             "google_longitude": "Longitude",
-            "google_result": "Result"
+
+            "google_query": "Search for address",
+            "google_result": "Goole Maps Result",
         }
 
     # readonly = ('streetnumber', 'streetname', 'aptnumber', 'nearest', 'city', 'state', 'zipcode', 'google_place_id')
@@ -457,7 +464,7 @@ class addressForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-        self.fields['address_search'] = forms.CharField(label='Search for address', initial="", disabled=False, required=False)
+        # self.fields['address_search'] = forms.CharField(label='Search for address', initial="", disabled=False, required=False)
 
         #for x in self.readonly:
             #self.fields[x].widget.attrs['disabled'] = 'disabled'
@@ -465,34 +472,43 @@ class addressForm(forms.ModelForm):
 
         self.helper.layout = Layout(
             TabHolder(
-                Tab('Search for address',
+                Tab('Address',
                     Row(
-                        Column('address_search', css_class='form-group col-md-12 mb-0'),
-                        css_class='form-row'
+                        Column('google_query', css_class='form-group col-md-12 mb-0'),
                     ),
                     Row(
                         Column('addressid',  css_class='form-group col-md-6 mb-0'),
-                        css_class='form-row'
+                        Column('google_place_id', css_class='form-group col-md-6 mb-0'),
                     ),
                     Row(
                         Column('streetnumber',  css_class='form-group col-md-3 mb-0'),
                         Column('streetname',  css_class='form-group col-md-6 mb-0'),
                         Column('aptnumber',  css_class='form-group col-md-3 mb-0'),
-                        css_class='form-row'
                     ),
                     Row(
-                        Column('city',  css_class='form-group col-md-4 mb-0'),
-                        Column('state',  css_class='form-group col-md-4 mb-0'),
-                        Column('zipcode',  css_class='form-group col-md-4 mb-0'),
-                        css_class='form-row'
-                    ),
-                    Row(
-                        Column('google_place_id', css_class='form-group col-md-4 mb-0'),
-                        Column('google_latitude', css_class='form-group col-md-4 mb-0'),
-                        Column('google_longitude', css_class='form-group col-md-4 mb-0'),
-                        css_class='form-row'
+                        Column('city',  css_class='form-group col-md-6 mb-0'),
+                        Column('state',  css_class='form-group col-md-2 mb-0'),
+                        Column('zipcode',  css_class='form-group col-md-2 mb-0'),
+                        Column('google_zipsuffix',  css_class='form-group col-md-2 mb-0'),
                     ),
                     Submit('submit', 'Save')
+                ),
+                Tab('Details',
+                    Row(
+                        Column('google_result', css_class='form-group col-md-12 mb-0'),
+                    ),
+                    Row(
+                        Column('nearest', css_class='form-group col-md-12 mb-0'),
+                    ),
+                    Row(
+                        Column('google_neighborhood', css_class='form-group col-md-4 mb-0'),
+                        Column('google_county', css_class='form-group col-md-4 mb-0'),
+                        Column('google_country', css_class='form-group col-md-4 mb-0'),
+                    ),
+                    Row(
+                        Column('google_latitude', css_class='form-group col-md-4 mb-0'),
+                        Column('google_longitude', css_class='form-group col-md-4 mb-0'),
+                    ),
                 )
             )
         )

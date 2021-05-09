@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.urls import reverse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, UpdateView
 
@@ -36,7 +37,7 @@ class participantNewView(CreateView):
     template_name = 'participant-view.html'
 
 
-class addressView(UpdateView):
+class addressView1(UpdateView):
     model = Addresses
     form_class = addressForm
     slug_field = 'addressid' # database field
@@ -49,7 +50,7 @@ class addressView(UpdateView):
         return context
 
 
-class addressNewView(CreateView):
+class addressNewView1(CreateView):
     model = Addresses
     form_class = addressForm
     template_name = 'address-view.html'
@@ -66,8 +67,8 @@ def addressSelectView(request, pguid_id):
         if 'delete_id' in request.POST:
             delete_id = request.POST.get('delete_id')
             print("--> views.py: addressSelectView: DELETE: delete_id:", delete_id)
-            # Addresses.objects.filter(addressid=delete_id).delete()
-            # ParticipantsAddresses.objects.filter(address_id=delete_id).delete()
+            Addresses.objects.filter(addressid=delete_id).delete()
+            ParticipantsAddresses.objects.filter(address_id=delete_id).delete()
 
         form = addressSelectForm(request.POST)
         if form.is_valid():
@@ -117,6 +118,7 @@ def addressesView(request):
         if 'delete_id' in request.POST:
             delete_id = request.POST.get('delete_id')
             print("--> views.py: addressesView: DELETE: delete_id:", delete_id)
+            ParticipantsAddresses.objects.filter(address_id=delete_id).delete()
             Addresses.objects.filter(addressid=delete_id).delete()
 
         form = addressSelectForm(request.POST)
@@ -141,13 +143,17 @@ def addressesView(request):
 @csrf_exempt
 def create_part_addr(request, pguid_id, addr_id):
     print("--> views.py: create_part_addr: pguid_id: ", pguid_id, " addr_id: ", addr_id)
-    to_year = datetime.now().year
-    from_year = to_year - 1
+    next_year = max([x['to_year'] for x in ParticipantsAddresses.objects.filter(pguid=pguid_id).values('to_year')], default=datetime.now().year) + 1
+    print(next_year)
+    from_year = next_year
+    to_year = next_year
+    address_type = "primary"
+    percentoftime = 100
     participant = Participants.objects.get(pguid=pguid_id)
     obj, created = ParticipantsAddresses.objects.update_or_create(
         pguid=participant, address_id=addr_id,
         defaults={'from_year': from_year, 'to_year': to_year,
-                  'addresstype': "primary", 'percentoftime': 100}
+                  'addresstype': address_type, 'percentoftime': percentoftime}
     )
     response = {
         'ok': True,
@@ -247,4 +253,105 @@ def addressNewViewForPguid(request, pguid_id):
         'GOOGLE_MAPS_API_KEY': settings.GOOGLE_MAPS_API_KEY
     }
 
+    return render(request, template_name, context)
+
+
+def addressNewView(request):
+    return addressEditView(request, None)
+
+
+def addressEditView(request, addr_id):
+
+    address = None
+    if addr_id != None:
+        address = Addresses.objects.filter(addressid=addr_id).first()
+
+    model = Addresses
+    form_class = addressForm
+    template_name = 'address-view.html'
+
+    # If this is a POST request then process the Form data
+    if request.method == 'POST':
+        print("--> views.py: addressEditView: Form Posted")
+        # Create a form instance and populate it with data from the request (binding):
+        form = addressForm(request.POST, instance=address)
+
+        # Check if the form is valid:
+        if form.is_valid():
+            print("--> views.py: addressEditView: form.cleaned_data: ", form.cleaned_data)
+
+            # process the data in form.cleaned_data as required
+            addressid = form.cleaned_data['addressid']
+
+            streetnumber = form.cleaned_data['streetnumber']
+            google_streetnumber = streetnumber
+
+            streetname = form.cleaned_data['streetname']
+            google_streetname = streetname
+
+            aptnumber = form.cleaned_data['aptnumber']
+
+            city = form.cleaned_data['city']
+            google_city = city
+
+            state = form.cleaned_data['state']
+            google_state = state
+
+            zipcode = form.cleaned_data['zipcode']
+            google_zipcode = zipcode
+            google_zipsuffix = form.cleaned_data['google_zipsuffix']
+
+            google_neighborhood = form.cleaned_data['google_neighborhood']
+            google_county = form.cleaned_data['google_county']
+            google_country = form.cleaned_data['google_country']
+
+            google_place_id = form.cleaned_data['google_place_id']
+            google_latitude = form.cleaned_data['google_latitude']
+            google_longitude = form.cleaned_data['google_longitude']
+
+            google_query = form.cleaned_data['google_query']
+            google_result = form.cleaned_data['google_result']
+
+            google_status = "OK"
+            google_method = "google"
+            google_date = datetime.now()
+            google_googlesenttoredcap = False
+            google_elevation = None
+
+            if addr_id != None:
+                # If editing an existing address, delete it first
+                Addresses.objects.filter(addressid=addressid).delete()
+
+            obj, created = Addresses.objects.update_or_create(
+                addressid=addressid,
+                streetnumber=streetnumber, google_streetnumber=google_streetnumber,
+                streetname=streetname, google_streetname=google_streetname,
+                aptnumber=aptnumber,
+                city=city, google_city=google_city,
+                state=state, google_state=google_state,
+                zipcode=zipcode, google_zipcode=google_zipcode, google_zipsuffix=google_zipsuffix,
+                google_neighborhood=google_neighborhood, google_county=google_county, google_country=google_country,
+                google_place_id=google_place_id,
+                google_latitude=google_latitude, google_longitude=google_longitude,
+                google_query=google_query, google_result=google_result,
+                google_status=google_status, google_method=google_method, google_date=google_date,
+                google_googlesenttoredcap=google_googlesenttoredcap,
+                google_elevation=google_elevation,
+            )
+
+            # redirect to a new URL:
+            return HttpResponseRedirect(reverse('addressEditView', args=[str(addressid)]))
+
+        else:
+            print("ERROR: addressEditView: form.errors: ", form.errors)
+
+    else:
+        print("--> views.py: addressEditView: Form Get")
+        form = addressForm(instance=address)
+
+    context = {
+        'form': form,
+        'addr_id': addr_id,
+        'GOOGLE_MAPS_API_KEY': settings.GOOGLE_MAPS_API_KEY
+    }
     return render(request, template_name, context)

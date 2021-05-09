@@ -6,8 +6,11 @@ urlpatterns = [
     path('teacher-survey/<slug:teachersurveyid>/', views.teacherSurveyView.as_view(), name='teacherSurveyView'),
     path('participants/participant-view/<slug:pguid>/', views.participantView.as_view(), name='participantView'),
     path('participants/participant-new/', views.participantNewView.as_view(), name='participantNewView'),
-    path('addresses/address-view/<slug:addr_id>/', views.addressView.as_view(), name='addressView'),
-    path('addresses/address-new/', views.addressNewView.as_view(), name='addressNewView'),
+
+    path('addresses/address-view-old/<slug:addr_id>/', views.addressView1.as_view(), name='addressView1'),
+    path('addresses/address-new-old/', views.addressNewView1.as_view(), name='addressNewView1'),
+    path('addresses/address-edit/<slug:addr_id>/', views.addressEditView, name='addressEditView'),
+    path('addresses/address-new/', views.addressNewView, name='addressNewView'),
 
     path('addresses_old/', views.addressesViewOld, name='addressesViewOld'),
     path('addresses/', views.addressesView, name='addressesView'),
