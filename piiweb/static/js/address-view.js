@@ -32,6 +32,10 @@ $(document).ready(function() {
             $(this).removeAttr('disabled');
         })
     });
+    $('#id_ddresses').on('click', function (e) {
+        var url = '/pii/addresses/';
+        location.href = url;
+    });
 });
 
 function addressFromAddressFields(id_prefix) {

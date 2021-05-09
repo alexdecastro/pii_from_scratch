@@ -97,38 +97,27 @@ def addressSelectView(request, pguid_id):
     return render(request, 'address-select.html', context)
 
 
-def addressesView1(request, pguid_id):
-    participants = Participants.objects.all()
-    for part in participants:
-        print("part.pguid: ", part.pguid)
-
-    # Create an array of address ids associated with this pguid
-    addr_id_list = []
-    parts_addrs = ParticipantsAddresses.objects.filter(pguid=pguid_id)
-    for part_addr in parts_addrs:
-        addr_id_list.append(part_addr.address_id)
-    addr_id_list = list(set(addr_id_list))
-
-    addresses = Addresses.objects.all()
-
-    context = {
-        'title': 'Addresses',
-        'addresses': addresses,
-        'participants': participants,
-        'parts_addrs': parts_addrs,
-        'addr_id_list': addr_id_list,
+def addressesViewOld(request):
+    l = request.user.groups.values_list('name',flat = True)
+    name = request.user.get_full_name()
+    groups = list(l)
+    ids = []
+    for group in groups:
+        ids += [x['pguid'] for x in Participants.objects.filter(current_site=group).values('pguid')]
+    context ={
+        'groups': ', '.join(groups), 'ids': ids, 'name': name,
+        'GOOGLE_MAPS_API_KEY': settings.GOOGLE_MAPS_API_KEY
     }
-    return render(request, 'addresses1.html', context)
+    return render(request, 'addresses-old.html', context)
 
 
-def addressesView2(request, pguid_id):
+def addressesView(request):
     if request.method == 'POST':
-        print("DEBUG: views.py: addressesView2: request.POST: ", request.POST)
+        print("DEBUG: views.py: addressesView: request.POST: ", request.POST)
         if 'delete_id' in request.POST:
             delete_id = request.POST.get('delete_id')
-            print("--> views.py: addressesView2: DELETE: delete_id:", delete_id)
-            # Addresses.objects.filter(addressid=delete_id).delete()
-            # ParticipantsAddresses.objects.filter(address_id=delete_id).delete()
+            print("--> views.py: addressesView: DELETE: delete_id:", delete_id)
+            Addresses.objects.filter(addressid=delete_id).delete()
 
         form = addressSelectForm(request.POST)
         if form.is_valid():
@@ -136,26 +125,17 @@ def addressesView2(request, pguid_id):
             new_input = form.save()
 
     else:
-        print("DEBUG: views.py: addressesView2: request.GET: ", request.GET)
+        print("DEBUG: views.py: addressesView: request.GET: ", request.GET)
         form = addressSelectForm()
-
-    # Create an array of address ids associated with this pguid
-    addr_id_list = []
-    parts_addrs = ParticipantsAddresses.objects.filter(pguid=pguid_id)
-    for part_addr in parts_addrs:
-        addr_id_list.append(part_addr.address_id)
-    addr_id_list = list(set(addr_id_list))
 
     addresses = Addresses.objects.all()
 
     context = {
         'title': 'Address List',
-        'pguid': pguid_id,
         'addresses': addresses,
-        'parts_addrs': parts_addrs,
-        'addr_id_list': addr_id_list,
+        'GOOGLE_MAPS_API_KEY': settings.GOOGLE_MAPS_API_KEY
     }
-    return render(request, 'addresses2.html', context)
+    return render(request, 'addresses.html', context)
 
 
 @csrf_exempt
