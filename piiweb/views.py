@@ -260,11 +260,22 @@ def addressNewView(request):
     return addressEditView(request, None)
 
 
+# Similar to: objects.get() except this returns None if the object does not exist
+# Replace: Addresses.get(addressid=addr_id)
+#    with: get_if_exists(Addresses, addressid=addr_id)
+def get_if_exists(model, **kwargs):
+    try:
+        obj = model.objects.get(**kwargs)
+    except model.DoesNotExist:  # Be explicit about exceptions
+        obj = None
+    return obj
+
+
 def addressEditView(request, addr_id):
 
     address = None
     if addr_id != None:
-        address = Addresses.objects.filter(addressid=addr_id).first()
+        address = get_if_exists(Addresses, addressid=addr_id)
 
     model = Addresses
     form_class = addressForm
